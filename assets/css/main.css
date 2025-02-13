@@ -2029,6 +2029,9 @@ padding-top:48px;
 .starter-section {
   /* Add your styles here */
 }
+#mob-contact{
+display:none;
+}
 @media(max-width:900px){
 .header .btn-getstarted{
 display:none;
@@ -2050,6 +2053,12 @@ justify-content: center;
 }
 .call-to-action {
     margin-top: 48px;
+}
+#mob-contact{
+    display: block;
+    width: fit-content;
+    margin: auto;
+    padding: 6px 23px;
 }
 }
 @media (max-width: 640px) {
@@ -2095,5 +2104,11 @@ justify-content: center;
 }
 .logo-hr {
     height: 55px;
+}
+#mob-contact{
+    display: block;
+    width: fit-content;
+    margin: auto;
+    padding: 6px 23px;
 }
 }
