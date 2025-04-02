@@ -44,9 +44,9 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="#hero" class="active">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
+                <li><a href="#hero" class="nav-link">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="gallery.html" class="nav-link">Gallery</a></li>
                 <li><a href="tel:+91 96565 49999" class="btn-getstarted" id="mob-contact">Contact</a></li>
 
             </ul>
@@ -57,6 +57,29 @@
 
     </div>
 </header>
+<script>
+    document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function (event) {
+        const targetSection = this.getAttribute('href');
+
+        if (targetSection.includes('#')) {
+            event.preventDefault();  // Prevent default jump behavior
+
+            if (window.location.pathname.includes("gallery.html")) {
+                // If on Gallery page, navigate to Index page first
+                window.location.href = targetSection;
+            } else {
+                // If already on Index page, smooth scroll to section
+                document.querySelector(targetSection.substring(targetSection.indexOf('#'))).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+    });
+});
+
+
+</script>
 
 <main class="main">
     <!-- Hero Section -->
