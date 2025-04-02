@@ -60,6 +60,42 @@
 
 <main class="main">
     <div>
+        <style>
+            #gallery {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+#gallery > div > img {
+    width: 100%;
+    min-height: 100%;
+    transition: all ease 1s;
+    height:100%;
+}
+            #gallery div{
+                flex: 0 0 20%;
+    height: 220px;
+            }
+            .section-title {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 0;
+    position: relative;
+}
+@media(max-width:768px){
+#gallery div {
+flex: 0 0 42%;
+}
+}
+@media(max-width:600px){
+#gallery div {
+flex: 0 0 90%;
+}
+}
+        </style>
         <div class="container section-title" data-aos="fade-up">
             <span>Our Gallery<br></span>
             <h2>Gallery</h2>
