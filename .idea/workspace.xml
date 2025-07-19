@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84037a55-1d0b-4a74-acd4-c5af952feb36" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/hard_rock.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/hard_rock.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gallery.html" beforeDir="false" afterPath="$PROJECT_DIR$/gallery.html" afterDir="false" />
     </list>
@@ -54,7 +55,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-2aecfc1ec8a9-5312c7369657-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.23774.123" />
+        <option value="bundled-python-sdk-5c61f135ce9a-d902c0275401-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-252.23309.36" />
       </set>
     </attachedChunks>
   </component>
