@@ -2032,6 +2032,25 @@ padding-top:48px;
 #mob-contact{
 display:none;
 }
+.flip-embedded a img {
+    border: none;
+    width: 290px;
+    object-fit: cover;
+    height: 290px;
+}
+.flip-grid-view .flip-entry {
+    float: left;
+    height: 290px;
+    margin: 0 10px 35px;
+    position: relative;
+    text-align: center;
+    width: 290px;
+}
+.flip-entries {
+    margin: auto;
+    margin-bottom: 50px;
+    padding: 10px;
+}
 @media(max-width:900px){
 .header .btn-getstarted{
 display:none;
