@@ -1,50 +1,608 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Cloudinary Upload</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="description"
+          content="Hard Rock Gypsum & Interior Design offers top-quality gypsum ceiling and interior solutions for homes, shops, and commercial spaces in Kerala.">
+    <meta name="keywords"
+          content="Gypsum Ceiling Work in Malappuram, Gypsum Ceiling Work in Palakkad, Gypsum Ceiling Work in Ernakulam, Gypsum Ceiling Work in Thrissur, Modern Gypsum Works in kerala, Top Gypsum False Ceiling, Popular Gypsum, gypsum work in Kerala, gypsum ceiling, interior design, ceiling solutions, home decor, modern gypsum interiors, False Ceiling Works in Kerala, decorative ceilings, best gypsum works in kerala">
+
+    <!-- Favicons -->
+    <link href="assets/img/logo-hr.png" rel="icon">
+    <link href="assets/img/logo-hr.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
 </head>
-<body>
-<h2>Upload Image</h2>
-<input type="file" id="fileInput"/>
-<button onclick="uploadFiles()">Upload</button>
 
-<div id="preview"></div>
+<body class="index-page">
 
+<header id="header" class="header d-flex align-items-center sticky-top">
+
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+            <!-- Uncomment the line below if you also wish to use an image logo -->
+            <!-- <img src="assets/img/logo.png" alt=""> -->
+            <img src="assets/img/logo-hr.png" alt="" class="logo-hr">
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="#hero" class="nav-link">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li><a href="tel:+91 96565 49999" class="btn-getstarted" id="mob-contact">Contact</a></li>
+
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+        <a class="btn-getstarted" href="#contact">Contact</a>
+
+    </div>
+</header>
 <script>
-    const cloudName = "djoqjaxba";   // from Cloudinary Dashboard
-    const uploadPreset = "unsigned_upload"; // your preset name
+    document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function (event) {
+        const targetSection = this.getAttribute('href');
 
-    async function uploadFiles() {
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) {
-        alert("Please select a file first.");
-        return;
-      }
+        if (targetSection.includes('#')) {
+            event.preventDefault();  // Prevent default jump behavior
 
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+            if (window.location.pathname.includes("gallery.html")) {
+                // If on Gallery page, navigate to Index page first
+                window.location.href = targetSection;
+            } else {
+                // If already on Index page, smooth scroll to section
+                document.querySelector(targetSection.substring(targetSection.indexOf('#'))).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+    });
+});
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          body: formData
-        });
-
-        const data = await res.json();
-        console.log("Uploaded:", data);
-
-        // Show preview
-        document.getElementById("preview").innerHTML = `
-          <p>Uploaded Successfully ✅</p>
-          <img src="${data.secure_url}" width="200"/>
-        `;
-      } catch (err) {
-        console.error("Upload failed", err);
-      }
-    }
 </script>
+
+<main class="main">
+    <!-- Hero Section -->
+    <section id="hero" class="hero section" style="background-image: url(assets/img/back.jpg);">
+        <div id="popupImages1" class="popup_image" style="display: none;">
+            <div class="pop_up">
+                <img src="assets/img/announce.webp" class="announce">
+                <span class="closes">
+           <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 24 24">
+<path d="M11 0.7H13V23.3H11z" transform="rotate(-45.001 12 12)"></path><path d="M0.7 11H23.3V13H0.7z"
+                                                                             transform="rotate(-45.001 12 12)"></path>
+</svg>
+          </span>
+                <h2 class="need">
+                    You Need Our Service
+                </h2>
+                <div class="call-now">
+                    <a href="tel:+91 96565 49999" class="call_button">
+                        Call Now !</a>
+                </div>
+
+            </div>
+        </div>
+        <a href="tel:+91 96565 49999">
+            <img src="assets/img/call.gif" alt="Call Animation" class="call-gif"></a>
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
+                    <h1>HARD ROCK</h1>
+                    <p>Gypsum & Interior Design crafted to perfection for elegant and modern spaces</p>
+                    <div class="d-flex">
+                        <a href="tel:+91 96565 49999" class="btn-get-started">Get Connect</a>
+                        <a href="https://wa.me/919656549999" target="_blank"
+                           class=" btn-watch-video d-flex align-items-center"><img src="assets/img/whatsapp.png"
+                                                                                   style="width: 44px;"></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="100">
+                    <img src="assets/img/vector.jpg" class="img-fluid animated" alt="">
+                </div>
+            </div>
+        </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- Featured Services Section -->
+    <section id="featured-services" class="featured-services section pt48">
+
+        <div class="container">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M360-160v-240h240v240H360Zm80-80h80v-80h-80v80ZM88-440l-48-64 440-336 160 122v-82h120v174l160 122-48 64-392-299L88-440Zm392 160Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">Casted Sheet Ceiling</a></h4>
+                        <p>The perfect blend of elegance, strength, and modern design.</p>
+                    </div>
+                </div><!-- End Service Item -->
+
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M280-440h400v-80H280v80Zm-80 320q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">Board Ceiling</a></h4>
+                        <p>Board Ceiling provide a sleek and seamless look for any space.</p>
+                    </div>
+                </div><!-- End Service Item -->
+
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm120-80v-560H200v560h120Zm80 0h360v-560H400v560Zm-80 0H200h120Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">Wall panelling</a></h4>
+                        <p>The perfect choice for stylish, strong, and customizable interior walls.</p>
+                    </div>
+                </div><!-- End Service Item -->
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">V- Board</a></h4>
+                        <p>A strong, eco-friendly, and stylish choice for long-lasting interiors.</p>
+                    </div>
+                </div><!-- End Service Item -->
+
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M480-118 120-398l66-50 294 228 294-228 66 50-360 280Zm0-202L120-600l360-280 360 280-360 280Zm0-280Zm0 178 230-178-230-178-230 178 230 178Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">V- Panel</a></h4>
+                        <p>A hassle-free solution for durable walls and ceilings.</p>
+                    </div>
+                </div><!-- End Service Item -->
+
+                <div class="col-lg-4 d-flex" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="42px" viewBox="0 -960 960 960" width="42px"
+                                 fill="#10bc69">
+                                <path d="M120-120v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm160 640v-80h80v80h-80Zm0-640v-80h80v80h-80Zm160 640v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm0-160v-80h80v80h-80Zm80-160h-80v-200q0-50-35-85t-85-35H440v-80h200q83 0 141.5 58.5T840-640v200Z"/>
+                            </svg>
+                        </div>
+                        <h4><a href="" class="stretched-link">Ceiling Corner</a></h4>
+                        <p>Upgrade your interiors with our sleek gypsum ceiling corners.</p>
+                    </div>
+                </div><!-- End Service Item -->
+
+            </div>
+
+        </div>
+
+    </section><!-- /Featured Services Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+            <span>About Us<br></span>
+            <h2>About</h2>
+        </div><!-- End Section Title -->
+
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
+                    <img src="assets/img/gypsum.jpg" class="img-fluid" alt="">
+                </div>
+                <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="200">
+                    <p class="about_text">
+                        At Hard Rock Gypsum & Interior Design, we specialize in all types of gypsum work for homes,
+                        shops, and commercial spaces. Our expert team delivers high-quality ceiling and interior
+                        solutions, ensuring precision and durability in every project. Whether you're looking to enhance
+                        your space with elegant gypsum ceilings, partitions, or decorative features, we provide the
+                        perfect craftsmanship. For flawless results, trust the perfect gypsum workers—dedicated to
+                        bringing your vision to life with excellence.
+                    </p>
+                    <ul>
+                        <li><i class="bi bi-check2-all"></i> <span>Skilled professionals handling all types of gypsum work with precision and care.</span>
+                        </li>
+                        <li><i class="bi bi-check2-all"></i> <span>Offering gypsum solutions for homes, shops, offices, and other commercial spaces.</span>
+                        </li>
+                        <li><i class="bi bi-check2-all"></i> <span>We use only the best materials to ensure durability and a long-lasting finish.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </section><!-- /About Section -->
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center w-100 h-100">
+            <span data-purecounter-start="0" data-purecounter-end="70" data-purecounter-duration="1"
+                  class="purecounter"></span>
+                        <p>Happy Clients</p>
+                    </div>
+                </div><!-- End Stats Item -->
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center w-100 h-100">
+            <span data-purecounter-start="0" data-purecounter-end="74" data-purecounter-duration="1"
+                  class="purecounter"></span>
+                        <p>Works</p>
+                    </div>
+                </div><!-- End Stats Item -->
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center w-100 h-100">
+            <span data-purecounter-start="0" data-purecounter-end="10" data-purecounter-duration="1"
+                  class="purecounter"></span>
+                        <p>Workers</p>
+                    </div>
+                </div><!-- End Stats Item -->
+            </div>
+        </div>
+    </section><!-- /Stats Section -->
+
+    <!-- Services Section -->
+    <!-- Call To Action Section -->
+    <div>
+        <div class="container section-title" data-aos="fade-up">
+            <span>Our Gallery<br></span>
+            <h2>Gallery</h2>
+        </div><!-- End Section Title -->
+        <div id="gallery">
+            <div><img src="assets/img/img1.jpeg"/><a href="#lightbox-1"></a></div>
+            <div><img src="assets/img/img2.jpeg"/><a href="#lightbox-2"></a></div>
+            <div><img src="assets/img/img3.jpeg"/><a href="#lightbox-3"></a></div>
+            <div><img src="assets/img/img4.jpeg"/><a href="#lightbox-4"></a></div>
+            <div><img src="assets/img/img5.jpeg"/><a href="#lightbox-5"></a></div>
+            <div><img src="assets/img/img6.jpeg"/><a href="#lightbox-6"></a></div>
+            <div><img src="assets/img/img7.jpeg"/><a href="#lightbox-7"></a></div>
+            <div><img src="assets/img/img8.jpeg"/><a href="#lightbox-8"></a></div>
+            <div><img src="assets/img/img9.jpeg"/><a href="#lightbox-9"></a></div>
+            <div><img src="assets/img/img10.jpeg"/><a href="#lightbox-10"></a></div>
+            <div><img src="assets/img/img11.jpeg"/><a href="#lightbox-11"></a></div>
+            <div><img src="assets/img/img12.jpeg"/><a href="#lightbox-12"></a></div>
+            <div><img src="assets/img/img13.jpeg"/><a href="#lightbox-13"></a></div>
+            <div><img src="assets/img/img14.jpeg"/><a href="#lightbox-14"></a></div>
+            <div><img src="assets/img/img15.jpeg"/><a href="#lightbox-15"></a></div>
+            <div><img src="assets/img/img16.jpeg"/><a href="#lightbox-16"></a></div>
+            <div><img src="assets/img/img17.jpeg"/><a href="#lightbox-17"></a></div>
+            <div><img src="assets/img/img18.jpeg"/><a href="#lightbox-18"></a></div>
+        </div>
+        <div class="lightbox" id="lightbox-1">
+            <div class="content"><img src="assets/img/img1.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-2">
+            <div class="content"><img src="assets/img/img2.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-3">
+            <div class="content"><img src="assets/img/img3.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-4">
+            <div class="content"><img src="assets/img/img4.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-5">
+            <div class="content"><img src="assets/img/img5.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-6">
+            <div class="content"><img src="assets/img/img6.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-7">
+            <div class="content"><img src="assets/img/img7.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-8">
+            <div class="content"><img src="assets/img/img8.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-9">
+            <div class="content"><img src="assets/img/img9.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-10">
+            <div class="content"><img src="assets/img/img10.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-11">
+            <div class="content"><img src="assets/img/img11.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-12">
+            <div class="content"><img src="assets/img/img12.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-13">
+            <div class="content"><img src="assets/img/img13.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-14">
+            <div class="content"><img src="assets/img/img14.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-15">
+            <div class="content"><img src="assets/img/img15.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-16">
+            <div class="content"><img src="assets/img/img16.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-17">
+            <div class="content"><img src="assets/img/img17.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox-18">
+            <div class="content"><img src="assets/img/img19.jpeg"/>
+                <a class="close" href="#gallery"></a>
+            </div>
+        </div>
+    </div>
+    <section id="call-to-action" class="call-to-action section accent-background">
+
+        <div class="container">
+            <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="100">
+                <div class="col-xl-10">
+                    <div class="text-center">
+                        <h3>Call To Action</h3>
+                        <p>Transform your space with Hard Rock Gypsum & Interior Design! Whether it’s a residential or
+                            commercial project, our expert team delivers top-quality gypsum solutions tailored to your
+                            needs.</p>
+                        <a class="cta-btn" href="tel:+91 96565 49999">Call To Action</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section><!-- /Call To Action Section -->
+
+    <!-- Team Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+            <span>Contact Us</span>
+            <h2>Contact</h2>
+            <p>Contact us today to get started and bring your vision to life with the perfect gypsum work!</p>
+        </div><!-- End Section Title -->
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-5">
+
+                    <div class="info-wrap">
+                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+                            <i class="bi bi-geo-alt flex-shrink-0"></i>
+                            <div>
+                                <h3>Address</h3>
+                                <p>Moloor Road, Nellaya, Chalavara, Kerala 680311</p>
+                            </div>
+                        </div><!-- End Info Item -->
+
+                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                            <i class="bi bi-telephone flex-shrink-0"></i>
+                            <div>
+                                <h3>Call Us</h3>
+                                <a href="tel:+91 96565 49999">+91 96565 49999</a>
+                            </div>
+                        </div><!-- End Info Item -->
+
+                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                            <i class="bi bi-envelope flex-shrink-0"></i>
+                            <div>
+                                <h3>Email Us</h3>
+                                <p>rasak.mk342@gmail.com</p>
+                            </div>
+                        </div><!-- End Info Item -->
+
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15674.103002267217!2d76.280662!3d10.847559!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7d1eb7de5dc9d%3A0xc6f114b56bcb80a8!2sHard%20Rock%20Gypsum%20%26%20Interior%20Design!5e0!3m2!1sen!2sin!4v1738645915806!5m2!1sen!2sin"
+                                style="border:0;height:270px;width:100%;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+
+                <div class="col-lg-7 position-relative align-self-start">
+                    <img src="assets/img/last.jpg" class="img-fluid" alt="">
+
+                    <!--                    <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up"-->
+                    <!--                          data-aos-delay="200">-->
+                    <!--                        <div class="row gy-4">-->
+
+                    <!--                            <div class="col-md-6">-->
+                    <!--                                <label for="name-field" class="pb-2">Your Name</label>-->
+                    <!--                                <input type="text" name="name" id="name-field" class="form-control" required="">-->
+                    <!--                            </div>-->
+
+                    <!--                            <div class="col-md-6">-->
+                    <!--                                <label for="email-field" class="pb-2">Your Email</label>-->
+                    <!--                                <input type="email" class="form-control" name="email" id="email-field" required="">-->
+                    <!--                            </div>-->
+
+                    <!--                            <div class="col-md-12">-->
+                    <!--                                <label for="subject-field" class="pb-2">Subject</label>-->
+                    <!--                                <input type="text" class="form-control" name="subject" id="subject-field" required="">-->
+                    <!--                            </div>-->
+
+                    <!--                            <div class="col-md-12">-->
+                    <!--                                <label for="message-field" class="pb-2">Message</label>-->
+                    <!--                                <textarea class="form-control" name="message" rows="10" id="message-field"-->
+                    <!--                                          required=""></textarea>-->
+                    <!--                            </div>-->
+
+                    <!--                            <div class="col-md-12 text-center">-->
+                    <!--                                <div class="loading">Loading</div>-->
+                    <!--                                <div class="error-message"></div>-->
+                    <!--                                <div class="sent-message">Your message has been sent. Thank you!</div>-->
+
+                    <!--                                <button type="submit">Send Message</button>-->
+                    <!--                            </div>-->
+
+                    <!--                        </div>-->
+                    <!--                    </form>-->
+                </div><!-- End Contact Form -->
+
+            </div>
+
+        </div>
+
+    </section><!-- /Contact Section -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"/>
+    <script>
+        // Fancybox Configuration
+    $('[data-fancybox="gallery"]').fancybox({
+      buttons: [
+        "slideShow",
+        "thumbs",
+        "zoom",
+        "fullScreen",
+        "share",
+        "close"
+      ],
+      loop: false,
+      protect: true
+    });
+
+    </script>
+</main>
+
+<footer id="footer" class="footer">
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6 footer-about">
+                <a href="index.html" class="d-flex align-items-center">
+                    <img src="assets/img/logo-hr.png" alt="" class="logo-hr"><span class="sitename">Hard Rock</span>
+                </a>
+                <div class="footer-contact pt-3">
+                    <p>Moloor Road, Nellaya, </p>
+                    <p>Chalavara, Kerala 680311</p>
+                    <p class="mt-3"><strong>Phone:</strong> <span>+91 96565 49999</span></p>
+                    <p><strong>Email:</strong> <span>rasak.mk342@gmail.com</span></p>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><i class="bi bi-chevron-right"></i> <a href="/">Home</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#about">About us</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#services">Services</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <h4>Follow Us</h4>
+                <p>Contact us today and let’s create something extraordinary together!</p>
+                <div class="social-links d-flex">
+                    <a href="tel:+91 96565 49999"><i class="bi bi-telephone"></i></a>
+                    <a href="https://wa.me/919656549999"><i class="bi bi-whatsapp"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Hard Rock</strong> <span>All Rights Reserved By
+            <a href="https://naseel1.github.io/portfolio/" target="_blank">Ns Creation</a></span>
+        </p>
+    </div>
+
+</footer>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/php-email-form/validate.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+<script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+<script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+<!-- Main JS File -->
+<script src="assets/js/main.js"></script>
+<script src="assets/js/popup.js"></script>
+
 </body>
+
 </html>
