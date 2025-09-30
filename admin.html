@@ -34,8 +34,8 @@
 
 <!-- Lock overlay -->
 <div id="lockScreen">
-    <h2>Enter 6-Digit Code</h2>
-    <input type="number" id="lockCodeInput" maxlength="6"/>
+    <h2>Enter Code</h2>
+    <input type="number" id="lockCodeInput" maxlength="10"/>
     <button onclick="checkCode()">Unlock</button>
 </div>
 
@@ -54,7 +54,7 @@
     const UPLOAD_PRESET = "unsigned_upload";
 
     // Set your 6-digit code here
-    const ADMIN_CODE = "123456";  // change to your desired code
+    const ADMIN_CODE = "?!-(~H~)";  // change to your desired code
 
     // Check the entered code
     function checkCode() {
