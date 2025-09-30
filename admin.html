@@ -36,15 +36,29 @@
         const data = await res.json();
         console.log("Uploaded:", data);
 
+        // Save URL in localStorage (or your DB)
+        let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+        images.push(data.secure_url);
+        localStorage.setItem("uploadedImages", JSON.stringify(images));
+
         // Show preview
-        document.getElementById("preview").innerHTML = `
-          <p>Uploaded Successfully ✅</p>
-          <img src="${data.secure_url}" width="200"/>
-        `;
+        showUploadedImages();
+
       } catch (err) {
         console.error("Upload failed", err);
       }
     }
+
+    // Display all uploaded images
+    function showUploadedImages() {
+      const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+      const previewDiv = document.getElementById("preview");
+      previewDiv.innerHTML = images.map(url => `<img src="${url}" width="200" style="margin:5px"/>`).join('');
+    }
+
+    // Initial load
+    showUploadedImages();
 </script>
+
 </body>
 </html>
