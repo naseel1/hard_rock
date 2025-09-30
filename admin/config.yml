@@ -2,8 +2,6 @@ backend:
   name: github
   repo: naseel1/hard_rock
   branch: main
-  base_url: https://api.netlify.com
-  auth_endpoint: auth
 
 media_folder: "images/gallery"
 public_folder: "/images/gallery"
