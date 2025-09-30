@@ -1,120 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Upload</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <style>
-        body { font-family: Arial; }
-        #lockScreen {
-          position: fixed; top:0; left:0; width:100%; height:100%;
-          background: rgba(0,0,0,0.9); color:white;
-          display: flex; flex-direction: column; justify-content: center; align-items: center;
-          z-index: 9999;
-        }
-        #lockScreen input { padding:10px; font-size:18px; width:250px; text-align:center; }
-        #lockScreen button { margin-top:10px; padding:10px 20px; font-size:16px; cursor:pointer; }
-        #preview img { border:1px solid #ccc; margin-bottom:5px; }
-        .img-wrapper { margin:10px; position:relative; display:inline-block; }
-        .delete-btn { position:absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer; }
-    </style>
+  <title>Admin Upload</title>
+  <style>
+    .img-wrapper { margin:10px; display:inline-block; position:relative; }
+    .img-wrapper img { border:1px solid #ccc; }
+    .delete-btn { position:absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer; }
+  </style>
 </head>
 <body>
+<h2>Upload Image</h2>
+<input type="file" id="fileInput"/>
+<button onclick="uploadFiles()">Upload</button>
 
-<!-- Lock overlay -->
-<div id="lockScreen">
-    <h2>Enter Admin Code</h2>
-    <input type="text" id="lockCodeInput" placeholder="Enter code"/>
-    <button onclick="checkCode()">Unlock</button>
-</div>
-
-<!-- Main admin content -->
-<div id="mainPage" style="display:none;">
-    <h2>Upload Image</h2>
-    <input type="file" id="fileInput"/>
-    <button onclick="uploadFiles()">Upload</button>
-
-    <h2>Uploaded Images</h2>
-    <div id="preview" style="display:flex; flex-wrap:wrap;"></div>
-</div>
+<h2>Uploaded Images</h2>
+<div id="preview" style="display:flex; flex-wrap:wrap;"></div>
 
 <script>
-    // Admin lock code (can be symbols, letters, numbers)
-    const ADMIN_CODE = "?!-(~H~)";
+const CLOUD_NAME = "djoqjaxba";          // your Cloudinary cloud name
+const UPLOAD_PRESET = "unsigned_upload";  // your unsigned preset
 
-    function checkCode() {
-      const input = document.getElementById("lockCodeInput").value;
-      if(input === ADMIN_CODE) {
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainPage").style.display = "block";
-        showUploadedImages();
-      } else {
-        alert("Incorrect code!");
-        document.getElementById("lockCodeInput").value = "";
-      }
-    }
+function getStoredImages() {
+  return JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+}
 
-    // Firebase config
-   const firebaseConfig = {
-      apiKey: "AIzaSyC-z6TPCJ4WsE7sGdlXgrFJIM_3IJtOo7s",
-      authDomain: "hardrock-media.firebaseapp.com",
-      projectId: "hardrock-media",
-      storageBucket: "hardrock-media.firebasestorage.app",
-      messagingSenderId: "1039350595521",
-      appId: "1:1039350595521:web:8ec84ad4d9204a36a8b940"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+function saveStoredImages(images) {
+  localStorage.setItem("uploadedImages", JSON.stringify(images));
+}
 
-    const CLOUD_NAME = "djoqjaxba";
-    const UPLOAD_PRESET = "unsigned_upload";
+// Upload image to Cloudinary
+async function uploadFiles() {
+  const file = document.getElementById("fileInput").files[0];
+  if(!file) return alert("Select a file");
 
-    async function uploadFiles() {
-      const file = document.getElementById("fileInput").files[0];
-      if(!file) return alert("Select a file");
+  const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
 
-      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", UPLOAD_PRESET);
+  try {
+    const res = await fetch(url, { method:"POST", body:formData });
+    const data = await res.json();
 
-      try {
-        const res = await fetch(url, { method:"POST", body:formData });
-        const data = await res.json();
+    const images = getStoredImages();
+    images.push({ url: data.secure_url });
+    saveStoredImages(images);
 
-        await db.collection("images").add({
-          url: data.secure_url,
-          public_id: data.public_id,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
+    showUploadedImages();
+  } catch(err) {
+    console.error(err);
+    alert("Upload failed");
+  }
+}
 
-        showUploadedImages();
-      } catch(err) {
-        console.error(err);
-        alert("Upload failed");
-      }
-    }
+// Display images with delete button
+function showUploadedImages() {
+  const images = getStoredImages();
+  const preview = document.getElementById("preview");
 
-    async function showUploadedImages() {
-      const snapshot = await db.collection("images").orderBy("timestamp","desc").get();
-      const previewDiv = document.getElementById("preview");
+  preview.innerHTML = images.map((img,index)=>`
+    <div class="img-wrapper">
+      <img src="${img.url}" width="200"/>
+      <button class="delete-btn" onclick="deleteImage(${index})">✖</button>
+    </div>
+  `).join('');
+}
 
-      previewDiv.innerHTML = snapshot.docs.map(doc => {
-        const img = doc.data();
-        return `
-          <div class="img-wrapper">
-            <img src="${img.url}" width="200"/>
-            <button class="delete-btn" onclick="deleteImage('${doc.id}')">✖</button>
-          </div>`;
-      }).join('');
-    }
+function deleteImage(index) {
+  const images = getStoredImages();
+  images.splice(index,1);
+  saveStoredImages(images);
+  showUploadedImages();
+}
 
-    async function deleteImage(docId) {
-      if(!confirm("Delete this image?")) return;
-      await db.collection("images").doc(docId).delete();
-      showUploadedImages();
-    }
+// Initial display
+showUploadedImages();
 </script>
 </body>
 </html>
-
