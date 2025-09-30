@@ -106,90 +106,138 @@ flex: 0 0 90%;
             <span>Our Gallery<br></span>
             <h2>Gallery</h2>
         </div><!-- End Section Title -->
-        <div class="lightbox" id="lightbox">
+        <div class="gallery" id="lightbox">
             <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
             <img id="lightbox-img" src="" alt="">
         </div>
 
         <script>
-            // Function to parse frontmatter from markdown
-            function parseFrontmatter(content) {
-                const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-                const match = content.match(frontmatterRegex);
+            const debugDiv = document.getElementById('debug');
+            const galleryContainer = document.getElementById('gallery');
 
-                if (!match) return null;
-
-                const frontmatter = {};
-                const lines = match[1].split('\n');
-
-                lines.forEach(line => {
-                    const [key, ...valueParts] = line.split(':');
-                    if (key && valueParts.length) {
-                        let value = valueParts.join(':').trim();
-                        // Remove quotes if present
-                        value = value.replace(/^["']|["']$/g, '');
-                        frontmatter[key.trim()] = value;
-                    }
-                });
-
-                return frontmatter;
+            function log(message) {
+                console.log(message);
+                debugDiv.style.display = 'block';
+                debugDiv.innerHTML += message + '<br>';
             }
 
-            // Function to load gallery images from GitHub
-            async function loadGallery() {
-                const galleryContainer = document.getElementById('gallery');
+            function parseFrontmatter(content) {
+                const lines = content.split('\n');
+                const data = {};
+                let inFrontmatter = false;
 
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line === '---') {
+                        if (!inFrontmatter) {
+                            inFrontmatter = true;
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (inFrontmatter && line) {
+                        const colonIndex = line.indexOf(':');
+                        if (colonIndex > -1) {
+                            const key = line.substring(0, colonIndex).trim();
+                            let value = line.substring(colonIndex + 1).trim();
+                            value = value.replace(/^["']|["']$/g, '');
+                            data[key] = value;
+                        }
+                    }
+                }
+
+                return data;
+            }
+
+            async function loadGallery() {
                 try {
-                    // Fetch the list of files in the gallery folder from GitHub
-                    const response = await fetch('https://api.github.com/repos/naseel1/hard_rock/contents/images/gallery');
+                    log('Fetching gallery contents from GitHub...');
+
+                    const apiUrl = 'https://api.github.com/repos/naseel1/hard_rock/contents/images/gallery';
+                    log(`API URL: ${apiUrl}`);
+
+                    const response = await fetch(apiUrl);
+                    log(`Response status: ${response.status}`);
 
                     if (!response.ok) {
-                        throw new Error('Failed to fetch gallery data');
+                        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
                     }
 
                     const files = await response.json();
+                    log(`Found ${files.length} files in gallery folder`);
 
-                    // Filter only .md files
                     const mdFiles = files.filter(file => file.name.endsWith('.md'));
+                    log(`Found ${mdFiles.length} markdown files`);
 
                     if (mdFiles.length === 0) {
-                        galleryContainer.innerHTML = '<div class="error">No images found in gallery. Add some images through the CMS!</div>';
+                        galleryContainer.innerHTML = '<div class="error">No images found. Please add images through the CMS at /admin/</div>';
                         return;
                     }
 
-                    // Clear loading message
                     galleryContainer.innerHTML = '';
 
-                    // Load each markdown file
                     for (const file of mdFiles) {
+                        log(`Processing: ${file.name}`);
+
                         const mdResponse = await fetch(file.download_url);
                         const mdContent = await mdResponse.text();
-                        const data = parseFrontmatter(mdContent);
 
-                        if (data && data.image) {
+                        log(`Content preview: ${mdContent.substring(0, 100)}...`);
+
+                        const data = parseFrontmatter(mdContent);
+                        log(`Parsed data: ${JSON.stringify(data)}`);
+
+                        if (data.image) {
                             const item = document.createElement('div');
                             item.className = 'gallery-item';
-                            item.onclick = () => openLightbox(data.image);
+
+                            // Handle relative URLs
+                            let imageSrc = data.image;
+                            if (imageSrc.startsWith('/')) {
+                                // If it's an absolute path from root, use it as is
+                                imageSrc = imageSrc;
+                            }
 
                             item.innerHTML = `
-                                <img src="${data.image}" alt="${data.title || 'Gallery image'}" loading="lazy">
+                                <img src="${imageSrc}"
+                                     alt="${data.title || 'Gallery image'}"
+                                     onerror="this.parentElement.style.display='none'; console.error('Failed to load: ${imageSrc}')"
+                                     loading="lazy">
                                 <div class="gallery-info">
                                     <div class="gallery-title">${data.title || 'Untitled'}</div>
                                     ${data.description ? `<div class="gallery-description">${data.description}</div>` : ''}
                                 </div>
                             `;
 
+                            item.querySelector('img').addEventListener('click', function() {
+                                openLightbox(this.src);
+                            });
+
                             galleryContainer.appendChild(item);
+                            log(`Added: ${data.title}`);
+                        } else {
+                            log(`No image field found in ${file.name}`);
                         }
                     }
 
+                    log('Gallery loaded successfully!');
+
                 } catch (error) {
-                    console.error('Error loading gallery:', error);
-                    galleryContainer.innerHTML = `<div class="error">Error loading gallery: ${error.message}</div>`;
+                    console.error('Error:', error);
+                    log(`ERROR: ${error.message}`);
+                    galleryContainer.innerHTML = `
+                        <div class="error">
+                            <h3>Error loading gallery</h3>
+                            <p>${error.message}</p>
+                            <p>Check the debug information above and console for details.</p>
+                        </div>
+                    `;
                 }
             }
 
-            // Lightbox functions
             function openLightbox(imageSrc) {
                 document.getElementById('lightbox').classList.add('active');
                 document.getElementById('lightbox-img').src = imageSrc;
@@ -199,17 +247,14 @@ flex: 0 0 90%;
                 document.getElementById('lightbox').classList.remove('active');
             }
 
-            // Close lightbox on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') closeLightbox();
             });
 
-            // Close lightbox on background click
             document.getElementById('lightbox').addEventListener('click', (e) => {
                 if (e.target.id === 'lightbox') closeLightbox();
             });
 
-            // Load gallery when page loads
             loadGallery();
         </script>
 
