@@ -107,13 +107,25 @@ flex: 0 0 90%;
               const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
               const galleryDiv = document.getElementById("gallery");
 
-              // images is an array of objects { url, public_id }
-              galleryDiv.innerHTML = images.map(img => `<img src="${img.url}" width="200" style="margin:5px"/>`).join('');
+              // Wrap each image in a separate div
+              galleryDiv.innerHTML = images.map(img => `
+                <div style="margin:10px; display:inline-block;">
+                  <img src="${img.url}" width="200" style="display:block;"/>
+                </div>
+              `).join('');
             }
 
             displayImages();
         </script>
 
+        <style>
+            #gallery img {
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px;
+            object-position: center;
+        }
+        </style>
     </div>
     <section id="call-to-action" class="call-to-action section accent-background">
 
