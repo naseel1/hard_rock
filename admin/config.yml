@@ -1,6 +1,5 @@
 backend:
-  name: github
-  repo: naseel1/hard_rock
+  name: git-gateway
   branch: main
 
 media_folder: "images/gallery"
@@ -13,6 +12,7 @@ collections:
     create: true
     slug: "{{slug}}"
     extension: "md"
+    format: "frontmatter"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
