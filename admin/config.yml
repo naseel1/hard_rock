@@ -1,12 +1,12 @@
 backend:
   name: github
-  repo: naseel1/hard_rock  # replace with your GitHub repo
-  branch: main  # or master if your default branch
-  auth_type: implicit
-  client_id: Ov23li8d3WnjN8Q1LWdr
+  repo: naseel1/hard_rock
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
 
-media_folder: "images/gallery"       # where uploaded images will be stored
-public_folder: "/images/gallery"     # how images will be referenced in HTML
+media_folder: "images/gallery"
+public_folder: "/images/gallery"
 
 collections:
   - name: "gallery"
@@ -14,6 +14,8 @@ collections:
     folder: "images/gallery"
     create: true
     slug: "{{slug}}"
+    extension: "md"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
+      - { label: "Description", name: "description", widget: "text", required: false }
