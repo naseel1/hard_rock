@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hardrock Media Admin</title>
+</head>
+<body>
+<h2>Admin Panel</h2>
+
+<!-- Login Button -->
+<button id="loginBtn">Login with Google</button>
+<button id="logoutBtn" style="display:none;">Logout</button>
+
+<!-- Upload -->
+<input type="file" id="fileInput" multiple>
+<button onclick="uploadFiles()">Upload</button>
+
+<!-- Gallery -->
+<h3>Gallery</h3>
+<div id="gallery"></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, listAll, deleteObject, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // 🔑 Replace with your config from Firebase
+   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC-z6TPCJ4WsE7sGdlXgrFJIM_3IJtOo7s",
+  authDomain: "hardrock-media.firebaseapp.com",
+  projectId: "hardrock-media",
+  storageBucket: "hardrock-media.firebasestorage.app",
+  messagingSenderId: "1039350595521",
+  appId: "1:1039350595521:web:8ec84ad4d9204a36a8b940",
+  measurementId: "G-DLV72Z0ZYG"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    loginBtn.onclick = () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider);
+    };
+
+    logoutBtn.onclick = () => {
+      signOut(auth);
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "block";
+        loadGallery();
+      } else {
+        loginBtn.style.display = "block";
+        logoutBtn.style.display = "none";
+        document.getElementById("gallery").innerHTML = "";
+      }
+    });
+
+    async function uploadFiles() {
+      const files = document.getElementById("fileInput").files;
+      for (let file of files) {
+        const storageRef = ref(storage, 'uploads/' + file.name);
+        await uploadBytes(storageRef, file);
+      }
+      alert("Files uploaded!");
+      loadGallery();
+    }
+
+    async function loadGallery() {
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+      const listRef = ref(storage, 'uploads/');
+      const res = await listAll(listRef);
+      for (let item of res.items) {
+        const url = await getDownloadURL(item);
+        gallery.innerHTML += `
+          <div>
+            <a href="${url}" target="_blank">${item.name}</a>
+            <button onclick="deleteFile('${item.fullPath}')">Delete</button>
+          </div>
+        `;
+      }
+    }
+
+    window.deleteFile = async (path) => {
+      const fileRef = ref(storage, path);
+      await deleteObject(fileRef);
+      alert("File deleted!");
+      loadGallery();
+    };
+</script>
+</body>
+</html>
