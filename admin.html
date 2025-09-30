@@ -1,119 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hardrock Media Admin</title>
-    <style>
-        /* Full-screen overlay */
-        #lockScreen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        #lockScreen input {
-            padding: 10px;
-            font-size: 20px;
-            width: 150px;
-            text-align: center;
-        }
-        #lockScreen button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <title>Admin Upload</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<h2>Upload Image</h2>
+<input type="file" id="fileInput"/>
+<button onclick="uploadFiles()">Upload</button>
 
-<!-- Lock overlay -->
-<div id="lockScreen">
-    <h2>Enter Code</h2>
-    <input type="text" id="lockCodeInput" maxlength="10"/>
-    <button onclick="checkCode()">Unlock</button>
-</div>
-
-<!-- Main page -->
-<div id="mainPage" style="display:none;">
-    <h2>Upload Image</h2>
-    <input type="file" id="fileInput"/>
-    <button onclick="uploadFiles()">Upload</button>
-
-    <h2>Uploaded Images</h2>
-    <div id="preview" style="display:flex; flex-wrap:wrap;"></div>
-</div>
+<h2>Uploaded Images</h2>
+<div id="preview" style="display:flex; flex-wrap:wrap;"></div>
 
 <script>
-    const CLOUD_NAME = "djoqjaxba";
-    const UPLOAD_PRESET = "unsigned_upload";
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyC-z6TPCJ4WsE7sGdlXgrFJIM_3IJtOo7s",
+    authDomain: "hardrock-media.firebaseapp.com",
+    projectId: "hardrock-media",
+    storageBucket: "hardrock-media.firebasestorage.app",
+    messagingSenderId: "1039350595521",
+    appId: "1:1039350595521:web:8ec84ad4d9204a36a8b940"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-    const ADMIN_CODE = "?!-(~H~)";  // example code
+  const CLOUD_NAME = "djoqjaxba";
+  const UPLOAD_PRESET = "unsigned_upload";
 
-function checkCode() {
-    const input = document.getElementById("lockCodeInput").value;
-    if(input === ADMIN_CODE) {
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainPage").style.display = "block";
-        showUploadedImages();
-    } else {
-        alert("Incorrect code!");
-        document.getElementById("lockCodeInput").value = "";
+  // Upload image to Cloudinary & store URL in Firestore
+  async function uploadFiles() {
+    const file = document.getElementById("fileInput").files[0];
+    if(!file) return alert("Select a file");
+
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    try {
+      const res = await fetch(url, { method:"POST", body:formData });
+      const data = await res.json();
+
+      await db.collection("images").add({
+        url: data.secure_url,
+        public_id: data.public_id,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      showUploadedImages();
+    } catch(err) {
+      console.error(err);
     }
-}
+  }
 
-    // Upload image to Cloudinary
-    async function uploadFiles() {
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) { alert("Please select a file first."); return; }
+  // Display all images with delete button
+  async function showUploadedImages() {
+    const snapshot = await db.collection("images").orderBy("timestamp","desc").get();
+    const previewDiv = document.getElementById("preview");
 
-      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", UPLOAD_PRESET);
-
-      try {
-        const res = await fetch(url, { method: "POST", body: formData });
-        const data = await res.json();
-
-        let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-        images.push({ url: data.secure_url, public_id: data.public_id });
-        localStorage.setItem("uploadedImages", JSON.stringify(images));
-
-        showUploadedImages();
-      } catch (err) {
-        console.error("Upload failed", err);
-      }
-    }
-
-    // Show uploaded images with delete button
-    function showUploadedImages() {
-      const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-      const previewDiv = document.getElementById("preview");
-      previewDiv.innerHTML = images.map((img, index) => `
-        <div style="margin:10px; position:relative;">
-          <img src="${img.url}" width="200" style="display:block; border:1px solid #ccc;"/>
-          <button onclick="deleteImage(${index})"
+    previewDiv.innerHTML = snapshot.docs.map(doc => {
+      const img = doc.data();
+      return `
+        <section class="gallery_img">
+          <img src="${img.url}" width="200"/>
+          <button onclick="deleteImage('${doc.id}','${img.public_id}')"
                   style="position:absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer;">
             ✖
           </button>
-        </div>
-      `).join('');
-    }
+        </section>`;
+    }).join('');
+  }
 
-    // Delete image
-    function deleteImage(index) {
-      let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-      const removed = images.splice(index, 1);
-      localStorage.setItem("uploadedImages", JSON.stringify(images));
-      showUploadedImages();
-    }
+  // Delete image from Cloudinary & Firestore
+  async function deleteImage(docId, publicId) {
+    if(!confirm("Delete this image?")) return;
+
+    // Delete from Firestore
+    await db.collection("images").doc(docId).delete();
+
+    // Optional: Delete from Cloudinary using backend
+    // Frontend cannot securely delete from Cloudinary
+
+    showUploadedImages();
+  }
+
+  showUploadedImages();
 </script>
-
 </body>
 </html>
