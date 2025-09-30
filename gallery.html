@@ -103,20 +103,21 @@ flex: 0 0 90%;
         <div id="gallery"></div>
 
         <script>
-            function displayImages() {
-              const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-              const galleryDiv = document.getElementById("gallery");
+            // List of public Cloudinary URLs
+            const images = [
+                "https://res.cloudinary.com/djoqjaxba/image/upload/v1690000000/sample1.jpg",
+                "https://res.cloudinary.com/djoqjaxba/image/upload/v1690000000/sample2.jpg",
+                "https://res.cloudinary.com/djoqjaxba/image/upload/v1690000000/sample3.jpg"
+            ];
 
-              // Wrap each image in a separate div
-              galleryDiv.innerHTML = images.map(img => `
-                <section class="gallery_img">
-                  <img src="${img.url}" width="200"/>
-                </section>
-              `).join('');
-            }
-
-            displayImages();
+            const galleryDiv = document.getElementById("gallery");
+            galleryDiv.innerHTML = images.map(url => `
+               <section class="gallery_img">
+                    <img src="${url}" width="200"/>
+                </div>
+            `).join('');
         </script>
+
 
         <style>
             #gallery img {
