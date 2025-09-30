@@ -8,56 +8,79 @@
 <input type="file" id="fileInput"/>
 <button onclick="uploadFiles()">Upload</button>
 
-<div id="preview"></div>
+<h2>Uploaded Images</h2>
+<div id="preview" style="display:flex; flex-wrap:wrap;"></div>
 
 <script>
-    const cloudName = "djoqjaxba";   // from Cloudinary Dashboard
-    const uploadPreset = "unsigned_upload"; // your preset name
+const cloudName = "djoqjaxba";   // from Cloudinary Dashboard
+const uploadPreset = "unsigned_upload"; // your preset name
 
-    async function uploadFiles() {
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) {
-        alert("Please select a file first.");
-        return;
-      }
+// Upload image to Cloudinary
+async function uploadFiles() {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) {
+    alert("Please select a file first.");
+    return;
+  }
 
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          body: formData
-        });
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      body: formData
+    });
 
-        const data = await res.json();
-        console.log("Uploaded:", data);
+    const data = await res.json();
+    console.log("Uploaded:", data);
 
-        // Save URL in localStorage (or your DB)
-        let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-        images.push(data.secure_url);
-        localStorage.setItem("uploadedImages", JSON.stringify(images));
+    // Save URL in localStorage
+    let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+    images.push({ url: data.secure_url, public_id: data.public_id });
+    localStorage.setItem("uploadedImages", JSON.stringify(images));
 
-        // Show preview
-        showUploadedImages();
-
-      } catch (err) {
-        console.error("Upload failed", err);
-      }
-    }
-
-    // Display all uploaded images
-    function showUploadedImages() {
-      const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
-      const previewDiv = document.getElementById("preview");
-      previewDiv.innerHTML = images.map(url => `<img src="${url}" width="200" style="margin:5px"/>`).join('');
-    }
-
-    // Initial load
+    // Refresh display
     showUploadedImages();
+
+  } catch (err) {
+    console.error("Upload failed", err);
+  }
+}
+
+// Display all uploaded images with delete button
+function showUploadedImages() {
+  const images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+  const previewDiv = document.getElementById("preview");
+
+  previewDiv.innerHTML = images.map((img, index) => `
+    <div style="margin:10px; position:relative;">
+      <img src="${img.url}" width="200" style="display:block; border:1px solid #ccc;"/>
+      <button onclick="deleteImage(${index})"
+              style="position:absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer;">
+        ✖
+      </button>
+    </div>
+  `).join('');
+}
+
+// Delete image from localStorage (frontend)
+function deleteImage(index) {
+  let images = JSON.parse(localStorage.getItem("uploadedImages") || "[]");
+  const removed = images.splice(index, 1);
+  localStorage.setItem("uploadedImages", JSON.stringify(images));
+  showUploadedImages();
+
+  // Optional: delete from Cloudinary via backend
+  // For security, deletion requires your API key & secret, so do this via a server
+  console.log("Deleted image URL:", removed[0].url);
+}
+
+// Initial display
+showUploadedImages();
 </script>
 
 </body>
