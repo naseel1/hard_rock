@@ -1,0 +1,17 @@
+backend:
+  name: github
+  repo: naseel1/hard_rock  # replace with your GitHub repo
+  branch: main  # or master if your default branch
+
+media_folder: "images/gallery"       # where uploaded images will be stored
+public_folder: "/images/gallery"     # how images will be referenced in HTML
+
+collections:
+  - name: "gallery"
+    label: "Gallery Images"
+    folder: "images/gallery"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Image", name: "image", widget: "image" }
