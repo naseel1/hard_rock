@@ -2,6 +2,8 @@ backend:
   name: github
   repo: naseel1/hard_rock  # replace with your GitHub repo
   branch: main  # or master if your default branch
+  auth_type: implicit
+  client_id: Ov23li8d3WnjN8Q1LWdr
 
 media_folder: "images/gallery"       # where uploaded images will be stored
 public_folder: "/images/gallery"     # how images will be referenced in HTML
