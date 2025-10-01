@@ -187,71 +187,92 @@ flex: 0 0 90%;
             loadGallery();
         </script>
 
-       <!-- ADD this CSS to your existing styles -->
-<style>
-    .gallery-image {
-        cursor: pointer;
-    }
+        <!-- ADD this CSS to your existing styles -->
+        <style>
+            .gallery-image {
+                cursor: pointer;
+                    transition: all 0.4s ease-in-out;
+            }
+.gallery-image:hover {
+    box-shadow: rgb(16 188 105) 0px 0.0625em 0.0625em, rgb(16 188 105 / 51%) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+    scale: 1.02;
+    transform: rotate3d(1, 1, 0, 5deg);
+}
+            .lightbox {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+            }
 
-    .lightbox {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-    }
+            .lightbox.active {
+                display: flex;
+            }
+            .lightbox.active img{
+            opacity:1;
+            }
 
-    .lightbox.active {
-        display: flex;
-    }
+            .lightbox img {
+                max-width: 90%;
+                max-height: 90%;
+            }
 
-    .lightbox img {
-        max-width: 90%;
-        max-height: 90%;
-    }
+            .lightbox-close {
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                font-size: 40px;
+                color: white;
+                cursor: pointer;
+                background: none;
+                border: none;
+            }
+        </style>
 
-    .lightbox-close {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        font-size: 40px;
-        color: white;
-        cursor: pointer;
-        background: none;
-        border: none;
-    }
-</style>
+        <!-- ADD this HTML after your gallery div -->
+        <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+            <button class="lightbox-close">&times;</button>
+            <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+        </div>
 
-<!-- ADD this HTML after your gallery div -->
-<div id="lightbox" class="lightbox">
-    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-    <img id="lightbox-img" src="" alt="">
-</div>
+        <!-- ADD this JavaScript at the end of your page -->
+        <script>
+            function openLightbox(src) {
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                lightboxImg.src = src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-<!-- ADD this JavaScript -->
-<script>
-    function openLightbox(src) {
-        document.getElementById('lightbox-img').src = src;
-        document.getElementById('lightbox').classList.add('active');
-    }
+            function closeLightbox() {
+                const lightbox = document.getElementById('lightbox');
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
 
-    function closeLightbox() {
-        document.getElementById('lightbox').classList.remove('active');
-    }
+            // Add click event to all gallery images after page loads
+            window.addEventListener('load', function() {
+                document.querySelectorAll('.gallery-image').forEach(function(img) {
+                    img.addEventListener('click', function() {
+                        openLightbox(this.src);
+                    });
+                });
+            });
 
-    document.getElementById('lightbox').addEventListener('click', function(e) {
-        if (e.target === this) closeLightbox();
-    });
-
-    document.querySelectorAll('.gallery-image').forEach(img => {
-        img.onclick = function() { openLightbox(this.src); };
-    });
-</script>
+            // Close on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+        </script>
     </div>
     <section id="call-to-action" class="call-to-action section accent-background">
 
