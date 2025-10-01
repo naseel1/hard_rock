@@ -10,10 +10,8 @@ collections:
     label: "Gallery Images"
     folder: "images/gallery"
     create: true
-    slug: "{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}-{{minute}}-{{second}}"
     extension: "md"
     format: "frontmatter"
     fields:
-      - { label: "Title", name: "title", widget: "string", required: false }
-      - { label: "Image", name: "image", widget: "image" }
-      - { label: "Description", name: "description", widget: "text", required: false }
+      - { label: "Images", name: "images", widget: "list", field: { label: "Image", name: "image", widget: "image" } }

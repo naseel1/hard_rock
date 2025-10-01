@@ -106,154 +106,45 @@ flex: 0 0 90%;
             <span>Our Gallery<br></span>
             <h2>Gallery</h2>
         </div><!-- End Section Title -->
-        <div class="gallery" id="lightbox">
-            <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-            <img id="lightbox-img" src="" alt="">
-        </div>
+        <div id="gallery" class="gallery"></div>
 
         <script>
-            const debugDiv = document.getElementById('debug');
-            const galleryContainer = document.getElementById('gallery');
-
-            function log(message) {
-                console.log(message);
-                debugDiv.style.display = 'block';
-                debugDiv.innerHTML += message + '<br>';
-            }
-
-            function parseFrontmatter(content) {
-                const lines = content.split('\n');
-                const data = {};
-                let inFrontmatter = false;
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-
-                    if (line === '---') {
-                        if (!inFrontmatter) {
-                            inFrontmatter = true;
-                            continue;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (inFrontmatter && line) {
-                        const colonIndex = line.indexOf(':');
-                        if (colonIndex > -1) {
-                            const key = line.substring(0, colonIndex).trim();
-                            let value = line.substring(colonIndex + 1).trim();
-                            value = value.replace(/^["']|["']$/g, '');
-                            data[key] = value;
-                        }
-                    }
-                }
-
-                return data;
-            }
-
             async function loadGallery() {
+                const galleryEl = document.getElementById('gallery');
+
                 try {
-                    log('Fetching gallery contents from GitHub...');
+                    const response = await fetch('/images/gallery/');
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const links = Array.from(doc.querySelectorAll('a'))
+                        .map(a => a.getAttribute('href'))
+                        .filter(href => href && href.endsWith('.md'));
 
-                    const apiUrl = 'https://api.github.com/repos/naseel1/hard_rock/contents/images/gallery';
-                    log(`API URL: ${apiUrl}`);
-
-                    const response = await fetch(apiUrl);
-                    log(`Response status: ${response.status}`);
-
-                    if (!response.ok) {
-                        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
-                    }
-
-                    const files = await response.json();
-                    log(`Found ${files.length} files in gallery folder`);
-
-                    const mdFiles = files.filter(file => file.name.endsWith('.md'));
-                    log(`Found ${mdFiles.length} markdown files`);
-
-                    if (mdFiles.length === 0) {
-                        galleryContainer.innerHTML = '<div class="error">No images found. Please add images through the CMS at /admin/</div>';
-                        return;
-                    }
-
-                    galleryContainer.innerHTML = '';
-
-                    for (const file of mdFiles) {
-                        log(`Processing: ${file.name}`);
-
-                        const mdResponse = await fetch(file.download_url);
+                    for (const link of links) {
+                        const mdResponse = await fetch(`/images/gallery/${link}`);
                         const mdContent = await mdResponse.text();
 
-                        log(`Content preview: ${mdContent.substring(0, 100)}...`);
+                        const frontmatterMatch = mdContent.match(/^---\s*\n([\s\S]*?)\n---/);
+                        if (frontmatterMatch) {
+                            const frontmatter = frontmatterMatch[1];
 
-                        const data = parseFrontmatter(mdContent);
-                        log(`Parsed data: ${JSON.stringify(data)}`);
-
-                        if (data.image) {
-                            const item = document.createElement('div');
-                            item.className = 'gallery-item';
-
-                            // Handle relative URLs
-                            let imageSrc = data.image;
-                            if (imageSrc.startsWith('/')) {
-                                // If it's an absolute path from root, use it as is
-                                imageSrc = imageSrc;
+                            // Match images array
+                            const imagesSection = frontmatter.match(/images:([\s\S]*?)(?=\n\w+:|$)/);
+                            if (imagesSection) {
+                                const imageMatches = imagesSection[1].matchAll(/image:\s*["']?(.+?)["']?\s*$/gm);
+                                for (const match of imageMatches) {
+                                    const img = document.createElement('img');
+                                    img.src = match[1];
+                                    galleryEl.appendChild(img);
+                                }
                             }
-
-                            item.innerHTML = `
-                                <img src="${imageSrc}"
-                                     alt="${data.title || 'Gallery image'}"
-                                     onerror="this.parentElement.style.display='none'; console.error('Failed to load: ${imageSrc}')"
-                                     loading="lazy">
-                                <div class="gallery-info">
-                                    <div class="gallery-title">${data.title || 'Untitled'}</div>
-                                    ${data.description ? `<div class="gallery-description">${data.description}</div>` : ''}
-                                </div>
-                            `;
-
-                            item.querySelector('img').addEventListener('click', function() {
-                                openLightbox(this.src);
-                            });
-
-                            galleryContainer.appendChild(item);
-                            log(`Added: ${data.title}`);
-                        } else {
-                            log(`No image field found in ${file.name}`);
                         }
                     }
-
-                    log('Gallery loaded successfully!');
-
                 } catch (error) {
-                    console.error('Error:', error);
-                    log(`ERROR: ${error.message}`);
-                    galleryContainer.innerHTML = `
-                        <div class="error">
-                            <h3>Error loading gallery</h3>
-                            <p>${error.message}</p>
-                            <p>Check the debug information above and console for details.</p>
-                        </div>
-                    `;
+                    galleryEl.innerHTML = '<p>Error loading gallery images.</p>';
                 }
             }
-
-            function openLightbox(imageSrc) {
-                document.getElementById('lightbox').classList.add('active');
-                document.getElementById('lightbox-img').src = imageSrc;
-            }
-
-            function closeLightbox() {
-                document.getElementById('lightbox').classList.remove('active');
-            }
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeLightbox();
-            });
-
-            document.getElementById('lightbox').addEventListener('click', (e) => {
-                if (e.target.id === 'lightbox') closeLightbox();
-            });
 
             loadGallery();
         </script>
