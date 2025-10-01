@@ -9,10 +9,16 @@ public_folder: "/images/gallery"
 collections:
   - name: "gallery"
     label: "Gallery Images"
-    folder: "images/gallery"
     create: true
     slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
-    fields:
-      - { label: "Images", name: "images", widget: "list", field: { label: "Image", name: "image", widget: "image" } }
+    files:
+      - label: "Gallery Images"
+        name: "gallery_images"
+        file: "gallery/gallery.md"
+        fields:
+          - label: "Images"
+            name: "images"
+            widget: "list"
+            field: { label: "Image", name: "image", widget: "image" }
