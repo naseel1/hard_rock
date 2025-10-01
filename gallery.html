@@ -30,10 +30,6 @@
     <link href="assets/css/main.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <style>
-        img { border:1px solid #ccc; margin-bottom:5px; }
-        .img-wrapper { margin:10px; display:inline-block; }
-    </style>
 </head>
 
 <body class="index-page">
@@ -114,13 +110,23 @@ flex: 0 0 90%;
 
         <style>
             .gallery-image {
-                max-width: 100%;
-                display: block;
-                margin-bottom: 20px;
-                background: white;
-                padding: 10px;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    display: block;
+    background: white;
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: none;
+    object-position: top center;
+        margin: 0;
+            }
+            .gallery-content{
+            margin: 40px 20px;
+            }
+            #gallery-images{
+            display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
             }
         </style>
 
