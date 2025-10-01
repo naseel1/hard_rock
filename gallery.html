@@ -109,20 +109,26 @@ flex: 0 0 90%;
         <div id="gallery" class="gallery"></div>
 
         <script>
+            // List of markdown files in your gallery folder
+            // Add the filename of each gallery entry you create in CMS
+            const galleryFiles = [
+                // Example: '2024-01-15-10-30-45.md',
+                // Add your gallery markdown filenames here
+            ];
+
             async function loadGallery() {
                 const galleryEl = document.getElementById('gallery');
 
-                try {
-                    const response = await fetch('/images/gallery/');
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const links = Array.from(doc.querySelectorAll('a'))
-                        .map(a => a.getAttribute('href'))
-                        .filter(href => href && href.endsWith('.md'));
+                if (galleryFiles.length === 0) {
+                    galleryEl.innerHTML = '<p>No gallery images yet. Upload images through the CMS and add the filename to the galleryFiles array in this HTML file.</p>';
+                    return;
+                }
 
-                    for (const link of links) {
-                        const mdResponse = await fetch(`/images/gallery/${link}`);
+                try {
+                    for (const file of galleryFiles) {
+                        const mdResponse = await fetch(`/images/gallery/${file}`);
+                        if (!mdResponse.ok) continue;
+
                         const mdContent = await mdResponse.text();
 
                         const frontmatterMatch = mdContent.match(/^---\s*\n([\s\S]*?)\n---/);
