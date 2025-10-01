@@ -102,9 +102,8 @@ flex: 0 0 90%;
             <span>Our Gallery<br></span>
             <h2>Gallery</h2>
         </div><!-- End Section Title -->
-        <div id="gallery-content" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+        <div id="gallery-content" style="margin: 40px;">
             <div id="gallery-images">
-                <p style="text-align: center; color: #666;">Loading images...</p>
             </div>
         </div>
 
@@ -181,21 +180,78 @@ flex: 0 0 90%;
 
                 } catch (error) {
                     console.error('Error:', error);
-                    galleryEl.innerHTML = '<p style="text-align: center; color: red;">Error loading gallery.</p>';
+                    galleryEl.innerHTML = '<p style="text-align: center; color: red;"></p>';
                 }
             }
 
             loadGallery();
         </script>
 
-        <style>
-            #gallery img {
-            height: auto;
-            object-fit: cover;
-            border-radius: 12px;
-            object-position: center;
-        }
-        </style>
+       <!-- ADD this CSS to your existing styles -->
+<style>
+    .gallery-image {
+        cursor: pointer;
+    }
+
+    .lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .lightbox.active {
+        display: flex;
+    }
+
+    .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+        background: none;
+        border: none;
+    }
+</style>
+
+<!-- ADD this HTML after your gallery div -->
+<div id="lightbox" class="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- ADD this JavaScript -->
+<script>
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+    }
+
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.querySelectorAll('.gallery-image').forEach(img => {
+        img.onclick = function() { openLightbox(this.src); };
+    });
+</script>
     </div>
     <section id="call-to-action" class="call-to-action section accent-background">
 
