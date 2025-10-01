@@ -106,53 +106,127 @@ flex: 0 0 90%;
             <span>Our Gallery<br></span>
             <h2>Gallery</h2>
         </div><!-- End Section Title -->
-        <div id="gallery" class="gallery"></div>
+        <div id="gallery-content" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+            <div id="gallery-images">
+                <p style="text-align: center; color: #666;">Loading images...</p>
+            </div>
+        </div>
+
+        <style>
+            .gallery-image {
+                max-width: 100%;
+                display: block;
+                margin-bottom: 20px;
+                background: white;
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+        </style>
 
         <script>
-            // List of markdown files in your gallery folder
-            // Add the filename of each gallery entry you create in CMS
-            const galleryFiles = [
-                // Example: '2024-01-15-10-30-45.md',
-                // Add your gallery markdown filenames here
-            ];
-
-            async function loadGallery() {
-                const galleryEl = document.getElementById('gallery');
-
-                if (galleryFiles.length === 0) {
-                    galleryEl.innerHTML = '<p>No gallery images yet. Upload images through the CMS and add the filename to the galleryFiles array in this HTML file.</p>';
-                    return;
-                }
+            async function loadGalleryImages() {
+                const galleryEl = document.getElementById('gallery-images');
 
                 try {
-                    for (const file of galleryFiles) {
-                        const mdResponse = await fetch(`/images/gallery/${file}`);
-                        if (!mdResponse.ok) continue;
+                    // Method 1: Try to load from GitHub via raw content
+                    const owner = 'naseel1';  // UPDATE THIS
+                    const repo = 'hard_rock';          // UPDATE THIS
+                    const branch = 'main';
 
-                        const mdContent = await mdResponse.text();
+                    // Fetch the list of files from GitHub
+                    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/images/gallery?ref=${branch}`;
+                    const response = await fetch(apiUrl);
 
-                        const frontmatterMatch = mdContent.match(/^---\s*\n([\s\S]*?)\n---/);
-                        if (frontmatterMatch) {
-                            const frontmatter = frontmatterMatch[1];
+                    if (!response.ok) {
+                        throw new Error('Could not fetch from GitHub');
+                    }
 
-                            // Match images array
-                            const imagesSection = frontmatter.match(/images:([\s\S]*?)(?=\n\w+:|$)/);
-                            if (imagesSection) {
-                                const imageMatches = imagesSection[1].matchAll(/image:\s*["']?(.+?)["']?\s*$/gm);
-                                for (const match of imageMatches) {
-                                    const img = document.createElement('img');
-                                    img.src = match[1];
-                                    galleryEl.appendChild(img);
-                                }
+                    const files = await response.json();
+                    const mdFiles = files.filter(f => f.name.endsWith('.md'));
+
+                    if (mdFiles.length === 0) {
+                        galleryEl.innerHTML = '<p style="text-align: center; color: #666;">No images uploaded yet. Please add images through the CMS.</p>';
+                        return;
+                    }
+
+                    galleryEl.innerHTML = '';
+
+                    // Process each markdown file
+                    for (const file of mdFiles) {
+                        const contentRes = await fetch(file.download_url);
+                        const content = await contentRes.text();
+
+                        // Parse the frontmatter to extract image paths
+                        const match = content.match(/^---\n([\s\S]*?)\n---/);
+                        if (match) {
+                            const frontmatter = match[1];
+
+                            // Match all image paths in the images array
+                            const imageMatches = frontmatter.matchAll(/image:\s*([^\n]+)/g);
+
+                            for (const imgMatch of imageMatches) {
+                                const imagePath = imgMatch[1].trim().replace(/['"]/g, '');
+
+                                // Create image element
+                                const img = document.createElement('img');
+                                img.className = 'gallery-image';
+                                img.src = imagePath;
+                                img.alt = 'Gallery image';
+                                img.loading = 'lazy';
+
+                                galleryEl.appendChild(img);
                             }
                         }
                     }
+
+                    if (galleryEl.children.length === 0) {
+                        galleryEl.innerHTML = '<p style="text-align: center; color: #666;">No images found. Please add images through the CMS.</p>';
+                    }
+
                 } catch (error) {
-                    galleryEl.innerHTML = '<p>Error loading gallery images.</p>';
+                    console.error('Error loading gallery:', error);
+
+                    // Method 2: Fallback - try loading directly from your domain
+                    try {
+                        const imageFiles = []; // Will auto-detect
+
+                        // Try common image extensions
+                        const possibleImages = await fetch('/images/gallery/').then(r => r.text()).catch(() => null);
+
+                        if (possibleImages) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(possibleImages, 'text/html');
+                            const links = Array.from(doc.querySelectorAll('a'));
+
+                            links.forEach(link => {
+                                const href = link.getAttribute('href');
+                                if (href && (href.endsWith('.jpg') || href.endsWith('.png') || href.endsWith('.jpeg') || href.endsWith('.gif') || href.endsWith('.webp'))) {
+                                    const img = document.createElement('img');
+                                    img.className = 'gallery-image';
+                                    img.src = '/images/gallery/' + href;
+                                    img.alt = 'Gallery image';
+                                    img.loading = 'lazy';
+                                    galleryEl.appendChild(img);
+                                }
+                            });
+                        }
+
+                        if (galleryEl.children.length === 0) {
+                            galleryEl.innerHTML = '<p style="text-align: center; color: #666;">Unable to load images. Please update GitHub credentials in the script.</p>';
+                        }
+                    } catch (e) {
+                        galleryEl.innerHTML = '<p style="text-align: center; color: #666;">Unable to load gallery. Please check console for errors.</p>';
+                    }
                 }
             }
 
-            loadGallery();
+            // Load images when page loads
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadGalleryImages);
+            } else {
+                loadGalleryImages();
+            }
         </script>
 
         <style>
