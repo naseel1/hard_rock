@@ -11,22 +11,45 @@
 <script>
     if (window.CMS) {
       CMS.registerPreviewStyle(`
+        /* General list layout */
         .field-list .nc-field {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
+          align-items: flex-start;
         }
+
+        /* Images inside list */
         .field-list .nc-field img {
           max-width: 100%;
           height: auto;
+          border-radius: 4px;
+          border: 1px solid #ccc;
         }
+
+        /* Mobile adjustments */
         @media (max-width: 768px) {
-          .field-list .nc-field {
-            flex-direction: column;
+          .nc-widget-list {
+            flex-direction: column !important;
+          }
+          .nc-widget-list .nc-widget-list-item {
+            width: 100% !important;
+            margin-bottom: 12px;
+          }
+          .nc-field {
+            flex-direction: column !important;
+          }
+          .nc-field input[type="file"] {
+            width: 100% !important;
+          }
+          button.nc-widget-list-add {
+            width: 100% !important;
+            margin-top: 8px;
           }
         }
       `, { raw: true });
     }
 </script>
+
 </body>
 </html>

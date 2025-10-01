@@ -18,7 +18,9 @@ collections:
           - label: "Images"
             name: "images"
             widget: "list"
+            allow_add: true
             field:
               label: "Image"
               name: "image"
               widget: "image"
+              required: false
