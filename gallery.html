@@ -2,7 +2,10 @@
 <html lang="en">
 
 <head>
+
+
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="description"
           content="Hard Rock Gypsum & Interior Design offers top-quality gypsum ceiling and interior solutions for homes, shops, and commercial spaces in Kerala.">
@@ -196,7 +199,7 @@ flex: 0 0 90%;
 .gallery-image:hover {
     box-shadow: rgb(16 188 105) 0px 0.0625em 0.0625em, rgb(16 188 105 / 51%) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
     scale: 1.02;
-    transform: rotate3d(1, 1, 0, 5deg);
+    transform: rotate3d(1, 1, 1, 5deg);
 }
             .lightbox {
                 display: none;
@@ -237,41 +240,52 @@ flex: 0 0 90%;
 
         <!-- ADD this HTML after your gallery div -->
         <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-            <button class="lightbox-close">&times;</button>
-            <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(); event.stopPropagation();">×</button>
+            <img id="lightbox-img" src="" alt="">
         </div>
 
         <!-- ADD this JavaScript at the end of your page -->
         <script>
-            function openLightbox(src) {
-                const lightbox = document.getElementById('lightbox');
-                const lightboxImg = document.getElementById('lightbox-img');
-                lightboxImg.src = src;
-                lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            const galleryEl = document.getElementById('gallery-images');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+
+            // Event delegation → works for static + dynamic images
+            galleryEl.addEventListener('click', (e) => {
+              if (e.target.classList.contains('gallery-image')) {
+                // remove active class from all
+                document.querySelectorAll('.gallery-image').forEach(img => {
+                  img.classList.remove('active');
+                });
+                // add active to clicked
+                e.target.classList.add('active');
+
+                // update lightbox image
+                lightboxImg.src = e.target.src;
+                lightboxImg.alt = e.target.alt;
+
+                // show lightbox
+                lightbox.style.display = 'flex';
+                lightboxImg.style.opacity = '1';
+              }
+            });
 
             function closeLightbox() {
-                const lightbox = document.getElementById('lightbox');
-                lightbox.classList.remove('active');
-                document.body.style.overflow = 'auto';
+              lightbox.style.display = 'none';
+              lightboxImg.src = "";
+              lightboxImg.alt = "";
             }
 
-            // Add click event to all gallery images after page loads
-            window.addEventListener('load', function() {
-                document.querySelectorAll('.gallery-image').forEach(function(img) {
-                    img.addEventListener('click', function() {
-                        openLightbox(this.src);
-                    });
-                });
+            // Escape key closes
+            document.addEventListener('keydown', (e) => {
+              if (e.key === "Escape") closeLightbox();
             });
 
-            // Close on ESC key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeLightbox();
-                }
-            });
+            // Set first image active by default
+            const firstImg = galleryEl.querySelector('.gallery-image');
+            if (firstImg) {
+              firstImg.classList.add('active');
+            }
         </script>
     </div>
     <section id="call-to-action" class="call-to-action section accent-background">

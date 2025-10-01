@@ -9,16 +9,16 @@ public_folder: "/images/gallery"
 collections:
   - name: "gallery"
     label: "Gallery Images"
-    create: true
-    slug: "{{slug}}"
-    extension: "md"
-    format: "frontmatter"
+    create: false
     files:
       - label: "Gallery Images"
         name: "gallery_images"
-        file: "gallery/gallery.md"
+        file: "gallery/gallery.md"  # the markdown file storing the gallery
         fields:
           - label: "Images"
             name: "images"
             widget: "list"
-            field: { label: "Image", name: "image", widget: "image" }
+            field:
+              label: "Image"
+              name: "image"
+              widget: "image"

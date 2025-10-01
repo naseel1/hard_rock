@@ -3,10 +3,30 @@
 <head>
     <meta charset="utf-8"/>
     <title>Content Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
 <body>
-<!-- Load Decap CMS (newer version with better mobile support) -->
+<!-- Decap CMS -->
 <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+<script>
+    if (window.CMS) {
+      CMS.registerPreviewStyle(`
+        .field-list .nc-field {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .field-list .nc-field img {
+          max-width: 100%;
+          height: auto;
+        }
+        @media (max-width: 768px) {
+          .field-list .nc-field {
+            flex-direction: column;
+          }
+        }
+      `, { raw: true });
+    }
+</script>
 </body>
 </html>
